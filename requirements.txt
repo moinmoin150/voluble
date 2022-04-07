@@ -3,3 +3,4 @@ pandas
 numpy
 datetime
 requests==2.25.1
+tweepy==3.10.0
