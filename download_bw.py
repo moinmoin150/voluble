@@ -51,21 +51,25 @@ start = start_date.strftime("%Y-%m-%d")
 end = end_date.strftime("%Y-%m-%d")
 
 # preview the number of data points to download
-url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
-r = requests.get(url, headers=h).json()
-st.write(f"Ready to download {r['mentionsCount']} data points")
+search_btn = st.button("Search")
+if search_btn:
+    url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
+    r = requests.get(url, headers=h).json()
+    st.write(f"Ready to collect {r['mentionsCount']} data points")
 
 # start downloading
-url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
-r = requests.get(url, headers=h).json()
-ids = [i['guid'] for i in r['results']]
-st.write('Downloading in process...')
-while 'nextCursor' in r:
-    cursor = r['nextCursor']
-    url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
+proceed_btn = st.button("Proceed?")
+if proceed_btn:
+    url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
     r = requests.get(url, headers=h).json()
-    ids += [i['guid'] for i in r['results']]
-    st.write(f"Downloaded {len(ids)} IDs")
+    ids = [i['guid'] for i in r['results']]
+    st.write('Data processing in process...')
+    while 'nextCursor' in r:
+        cursor = r['nextCursor']
+        url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
+        r = requests.get(url, headers=h).json()
+        ids += [i['guid'] for i in r['results']]
+        st.write(f"Collected {len(ids)} IDs")
 
 df = pd.DataFrame({
 'ID':ids
