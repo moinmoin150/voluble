@@ -85,6 +85,7 @@ if st.session_state['button'] == True:
         df = pd.DataFrame({
         'ID':ids
         })
-        st.dataframe(df)
+	st.subheader("Preview first 50 rows:")
+        st.dataframe(df.head(50))
         download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
         st.session_state['button'] = False
