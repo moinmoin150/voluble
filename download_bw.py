@@ -83,9 +83,14 @@ if st.session_state['button'] == True:
             st.write(f"Collected {len(ids)} IDs")
 
         df = pd.DataFrame({
-        'ID':ids
+        'ID':ids,
+        'ID_string':[str(i) for i in ids]
         })
         st.subheader("Preview first 50 rows:")
         st.dataframe(df.head(50))
         download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
         st.session_state['button'] = False
+
+        twi_btn = st.button(f"Collect these {len(ids)} tweets via Twitter API?")
+        if twi_btn:
+            st.write("it works!")
