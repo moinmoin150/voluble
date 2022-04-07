@@ -92,5 +92,7 @@ if st.session_state['button'] == True:
         st.session_state['button'] = False
 
         twi_btn = st.button(f"Collect these {len(ids)} tweets via Twitter API?")
-        if twi_btn:
+        if st.session_state.get('button') != True:
+            st.session_state['button'] = twi_btn
+        if st.session_state['button'] == True:
             st.write("it works!")
