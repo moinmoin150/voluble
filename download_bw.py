@@ -111,33 +111,35 @@ if st.session_state['button'] == True:
                 for tweet in tweets:
                     out.append(tweet._json)
         st.write(f"Complete! Total Number: {len(out)}")
-        col_list = ['created_at', 'id', 'id_str', 'full_text', 'source', 'in_reply_to_status_id',
-        'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'in_reply_to_screen_name',
-        'user', 'retweeted_status', 'retweet_count', 'favorite_count', 'lang']
-        columns_to_download = st.multiselect("Select Columns to Include",col_list, default="id")
-        dta = {}
-        for c in columns_to_download:
-            if c == 'user':
-                dta[c] = []
-                for i in out:
-                    try:
-                        dta[c].append(i[c]['screen_name'])
-                    except:
-                        dta[c].append('None')
-            elif c == 'retweeted_status':
-                dta[c] = []
-                for i in out:
-                    try:
-                        dta[c].append(i[c]['id_str'])
-                    except:
-                        dta[c].append('None')
-            else:
-                dta[c] = []
-                for i in out:
-                    try:
-                        dta[c].append(i[c])
-                    except:
-                        dta[c].append('None')
-        twi_df = pd.DataFrame(dta)
-        download2 = FileDownloader(twi_df.to_csv(),file_ext='csv').download_dta()
-        st.session_state['button'] = False
+	st.session_state['button'] = False
+
+col_list = ['created_at', 'id', 'id_str', 'full_text', 'source', 'in_reply_to_status_id',
+'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'in_reply_to_screen_name',
+'user', 'retweeted_status', 'retweet_count', 'favorite_count', 'lang']
+columns_to_download = st.multiselect("Select Columns to Include",col_list, default="id")
+dta = {}
+for c in columns_to_download:
+    if c == 'user':
+	dta[c] = []
+	for i in out:
+	    try:
+		dta[c].append(i[c]['screen_name'])
+	    except:
+		dta[c].append('None')
+    elif c == 'retweeted_status':
+	dta[c] = []
+	for i in out:
+	    try:
+		dta[c].append(i[c]['id_str'])
+	    except:
+		dta[c].append('None')
+    else:
+	dta[c] = []
+	for i in out:
+	    try:
+		dta[c].append(i[c])
+	    except:
+		dta[c].append('None')
+twi_df = pd.DataFrame(dta)
+download2 = FileDownloader(twi_df.to_csv(),file_ext='csv').download_dta()
+
