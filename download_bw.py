@@ -119,26 +119,26 @@ columns_to_download = st.multiselect("Select Columns to Include",col_list, defau
 dta = {}
 for c in columns_to_download:
     if c == 'user':
-	dta[c] = []
-	for i in out:
-	    try:
-		dta[c].append(i[c]['screen_name'])
-	    except:
-		dta[c].append('None')
+        dta[c] = []
+        for i in out:
+            try:
+                dta[c].append(i[c]['screen_name'])
+            except:
+                dta[c].append('None')
     elif c == 'retweeted_status':
-	dta[c] = []
-	for i in out:
-	    try:
-		dta[c].append(i[c]['id_str'])
-	    except:
-		dta[c].append('None')
+        dta[c] = []
+        for i in out:
+            try:
+                dta[c].append(i[c]['id_str'])
+            except:
+                dta[c].append('None')
     else:
-	dta[c] = []
-	for i in out:
-	    try:
-		dta[c].append(i[c])
-	    except:
-		dta[c].append('None')
+        dta[c] = []
+        for i in out:
+            try:
+                dta[c].append(i[c])
+            except:
+                dta[c].append('None')
 twi_df = pd.DataFrame(dta)
 download2 = FileDownloader(twi_df.to_csv(),file_ext='csv').download_dta()
 st.session_state['button'] = False
