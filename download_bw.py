@@ -35,7 +35,7 @@ h = {
 }
 
 # request query list
-url = 'https://api.brandwatch.com/projects/1998290339/queries/summary'
+url = 'https://api.brandwatch.com/projects/1998290339/queries'
 r = requests.get(url, headers=h).json()
 queries = [i['name'] for i in r['results']]
 
@@ -43,7 +43,16 @@ queries = [i['name'] for i in r['results']]
 st.markdown("# Download Tweets From Brandwatch")
 query = st.selectbox("Select the query", queries)
 _id = [i['id'] for i in r['results'] if i['name']==query][0]
-
+if st.checkbox('Query Quick Look'):
+    st.subheader('Query:')
+    st.write([i['booleanQuery'] for i in r['results'] if i['name']==query][0])
+    st.subheader('Since:')
+    st.write([i['startDate'] for i in r['results'] if i['name']==query][0])
+    st.subheader('Content Sources:')
+    st.write([i['contentSources'] for i in r['results'] if i['name']==query][0])
+    st.subheader('Location Filter:')
+    st.write([i['locationFilter'] for i in r['results'] if i['name']==query][0])
+	
 # user select date range
 start_date = st.date_input("Select start date")
 end_date = st.date_input("Select end date")
