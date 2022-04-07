@@ -81,11 +81,11 @@ if st.session_state['button'] == True:
             r = requests.get(url, headers=h).json()
             ids += [i['guid'] for i in r['results']]
             st.write(f"Collected {len(ids)} IDs")
-
-        df = pd.DataFrame({
+	
+	df = pd.DataFrame({
         'ID':ids
         })
 	st.subheader("Preview first 50 rows:")
 	st.dataframe(df.head(50))
-        download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
-        st.session_state['button'] = False
+	download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
+	st.session_state['button'] = False
