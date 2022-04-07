@@ -69,8 +69,8 @@ if st.session_state['button'] == True:
     st.write(f"Ready to collect {r['mentionsCount']} data points")
 
 # start downloading
-    proceed_btn = st.button("Proceed?")
-    if proceed_btn:
+    proceed = st.checkbox("Proceed?")
+    if proceed:
         url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
         r = requests.get(url, headers=h).json()
         ids = [i['guid'] for i in r['results']]
@@ -89,10 +89,8 @@ if st.session_state['button'] == True:
         st.subheader("Preview first 50 rows:")
         st.dataframe(df.head(50))
         download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
-        st.session_state['button'] = False
 
         twi_btn = st.button(f"Collect these {len(ids)} tweets via Twitter API?")
-        if st.session_state.get('button') != True:
-            st.session_state['button'] = twi_btn
-        if st.session_state['button'] == True:
+        if twi_btn:
             st.write("it works!")
+            st.session_state['button'] = False
