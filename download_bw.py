@@ -52,27 +52,30 @@ end = end_date.strftime("%Y-%m-%d")
 
 # preview the number of data points to download
 search_btn = st.button("Search")
-if search_btn:
+if st.session_state.get('button') != True:
+    st.session_state['button'] = search_btn
+if st.session_state['button'] == True:
     url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
     r = requests.get(url, headers=h).json()
     st.write(f"Ready to collect {r['mentionsCount']} data points")
 
 # start downloading
-proceed_btn = st.button("Proceed?")
-if proceed_btn:
-    url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
-    r = requests.get(url, headers=h).json()
-    ids = [i['guid'] for i in r['results']]
-    st.write('Data processing in process...')
-    while 'nextCursor' in r:
-        cursor = r['nextCursor']
-        url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
+    proceed_btn = st.button("Proceed?")
+    if proceed_btn:
+        url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
         r = requests.get(url, headers=h).json()
-        ids += [i['guid'] for i in r['results']]
-        st.write(f"Collected {len(ids)} IDs")
+        ids = [i['guid'] for i in r['results']]
+        st.write('Data processing in process...')
+        while 'nextCursor' in r:
+            cursor = r['nextCursor']
+            url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
+            r = requests.get(url, headers=h).json()
+            ids += [i['guid'] for i in r['results']]
+            st.write(f"Collected {len(ids)} IDs")
 
-df = pd.DataFrame({
-'ID':ids
-})
-st.dataframe(df)
-download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
+        df = pd.DataFrame({
+        'ID':ids
+        })
+        st.dataframe(df)
+        download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
+        st.session_state['button'] = False
