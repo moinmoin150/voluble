@@ -1,0 +1,7 @@
+streamlit
+pandas
+numpy
+datetime
+time
+base64
+requests==2.25.1
