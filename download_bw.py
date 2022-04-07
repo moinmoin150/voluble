@@ -65,7 +65,7 @@ while 'nextCursor' in r:
     url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
     r = requests.get(url, headers=h).json()
     ids += [i['guid'] for i in r['results']]
-    st.write(f"Downloaded {len(ids} IDs")
+    st.write(f"Downloaded {len(ids)} IDs")
 
 df = pd.DataFrame({
 'ID':ids
