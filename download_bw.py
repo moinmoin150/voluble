@@ -98,7 +98,8 @@ if st.session_state['button'] == True:
         st.subheader("Preview first 50 rows:")
         st.dataframe(df.head(50))
         download = FileDownloader(df.to_csv(),file_ext='csv').download_id()
-	with st.spinner('Download in process...'):
+        
+        with st.spinner('Download in process...'):
             auth = tweepy.OAuthHandler(st.secrets["CONSUMER_KEY"], st.secrets["CONSUMER_SECRET"])
             auth.set_access_token(st.secrets["OAUTH_TOKEN"], st.secrets["OAUTH_TOKEN_SECRET"])
             api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
@@ -109,7 +110,7 @@ if st.session_state['button'] == True:
                 tweets = api.statuses_lookup(seq,tweet_mode='extended')
                 for tweet in tweets:
                     out.append(tweet._json)
-	st.write(f"Complete! Total Number: {len(out)}")
+        st.write(f"Complete! Total Number: {len(out)}")
 	col_list = ['created_at', 'id', 'id_str', 'full_text', 'source', 'in_reply_to_status_id',
 	'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'in_reply_to_screen_name',
 	'user', 'retweeted_status', 'retweet_count', 'favorite_count', 'lang']
