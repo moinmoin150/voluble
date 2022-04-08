@@ -45,6 +45,7 @@ h = {
 # request query list
 url2 = 'https://api.brandwatch.com/projects/1998290339/queries'
 r2 = requests.get(url2, headers=h).json()
+st.write(r2)
 queries = [i['name'] for i in r2['results']]
 
 # user input query name
