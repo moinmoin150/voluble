@@ -51,13 +51,15 @@ queries = [i['name'] for i in r['results']]
 st.markdown("# Download Tweets From Brandwatch")
 query = st.selectbox("Select the query", queries)
 _id = [i['id'] for i in r['results'] if i['name']==query][0]
+source = [i['contentSources'] for i in r['results'] if i['name']==query][0]
+if ('twitter' not in source)|(len(source)>1):
+    st.markdown("##### Please select a Twitter only query!")
 if st.checkbox('Query Quick Look'):
     st.subheader('Query:')
     st.write([i['booleanQuery'] for i in r['results'] if i['name']==query][0])
     st.subheader('Since:')
     st.write([i['startDate'] for i in r['results'] if i['name']==query][0])
     st.subheader('Content Sources:')
-    source = [i['contentSources'] for i in r['results'] if i['name']==query][0]
     st.write(source)
     st.subheader('Location Filter:')
     st.write([i['locationFilter'] for i in r['results'] if i['name']==query][0])
