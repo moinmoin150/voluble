@@ -31,7 +31,6 @@ class FileDownloader(object):
 		href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here</a>'
 		st.markdown(href,unsafe_allow_html=True)
 
-@st.cache(persist=True, show_spinner=True, allow_output_mutation=True)
 # request access token
 params = {
 "password":st.secrets["password"]
