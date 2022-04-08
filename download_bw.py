@@ -76,7 +76,9 @@ columns_to_download = st.multiselect("Select Columns to Include in Dataset",col_
 
 # preview the number of data points to download
 search_btn = st.button("Search", key='search')
-if search_btn:
+if st.session_state.get('button') != True:
+    st.session_state['button'] = search_btn
+if st.session_state['button'] == True:
     url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
     r = requests.get(url, headers=h).json()
     st.write(f"Ready to collect {r['mentionsCount']} data points")
@@ -141,3 +143,4 @@ if search_btn:
                         dta[c].append('None')
         twi_df = pd.DataFrame(dta)
         download2 = FileDownloader(twi_df.to_csv(),file_ext='csv').download_dta()
+	st.session_state['button'] = False
