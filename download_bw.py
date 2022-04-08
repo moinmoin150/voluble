@@ -24,8 +24,8 @@ class FileDownloader(object):
 		st.markdown("#### Download ID list ###")
 		href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here</a>'
 		st.markdown(href,unsafe_allow_html=True)
-	
-	def download_dta(self):
+
+    def download_dta(self):
 		b64 = base64.b64encode(self.data.encode()).decode()
 		new_filename = "{}_{}_.{}".format(self.filename,timestr,self.file_ext)
 		st.markdown("#### Download Tweets ###")
@@ -58,34 +58,37 @@ if st.checkbox('Query Quick Look'):
     st.subheader('Since:')
     st.write([i['startDate'] for i in r['results'] if i['name']==query][0])
     st.subheader('Content Sources:')
-    st.write([i['contentSources'] for i in r['results'] if i['name']==query][0])
+    source = [i['contentSources'] for i in r['results'] if i['name']==query][0]
+    st.write(source)
     st.subheader('Location Filter:')
     st.write([i['locationFilter'] for i in r['results'] if i['name']==query][0])
-	
+
 # user select date range
 start_date = st.date_input("Select start date")
 end_date = st.date_input("Select end date")
 start = start_date.strftime("%Y-%m-%d")
 end = end_date.strftime("%Y-%m-%d")
 
+# select columns to download
+col_list = ['created_at', 'id', 'id_str', 'full_text', 'source', 'in_reply_to_status_id',
+'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'in_reply_to_screen_name',
+'user', 'retweeted_status', 'retweet_count', 'favorite_count', 'lang']
+columns_to_download = st.multiselect("Select Columns to Include in Dataset",col_list, default="id")
+
 # preview the number of data points to download
-search_btn = st.button("Search")
-session_state = st.session_state.get(a=0, b=0)
+search_btn = st.button("Search", key='search')
 if search_btn:
-    session_state.a = search_btn
-if session_state.a == True:
     url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
     r = requests.get(url, headers=h).json()
     st.write(f"Ready to collect {r['mentionsCount']} data points")
 
 # start downloading
-
-    session_state.b = st.checkbox("Proceed?")
-    if session_state.b == True:
+    download_btn = st.button("Download", key='download')
+    if download_btn:
         url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
         r = requests.get(url, headers=h).json()
         ids = [i['guid'] for i in r['results']]
-        st.write('Data processing in process...')
+        st.write('Getting ids...')
         while 'nextCursor' in r:
             cursor = r['nextCursor']
             url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
@@ -113,11 +116,7 @@ if session_state.a == True:
                 for tweet in tweets:
                     out.append(tweet._json)
         st.write(f"Complete! Total Number: {len(out)}")
-        
-        col_list = ['created_at', 'id', 'id_str', 'full_text', 'source', 'in_reply_to_status_id',
-        'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'in_reply_to_screen_name',
-        'user', 'retweeted_status', 'retweet_count', 'favorite_count', 'lang']
-        columns_to_download = st.multiselect("Select Columns to Include",col_list, default="id")
+
         dta = {}
         for c in columns_to_download:
             if c == 'user':
@@ -143,4 +142,3 @@ if session_state.a == True:
                         dta[c].append('None')
         twi_df = pd.DataFrame(dta)
         download2 = FileDownloader(twi_df.to_csv(),file_ext='csv').download_dta()
-
