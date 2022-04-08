@@ -36,7 +36,7 @@ params = {
 "password":st.secrets["password"]
 }
 url1 = 'https://api.brandwatch.com/oauth/token?username=tzhu@gbexpertsgroup.com&grant_type=api-password&client_id=brandwatch-api-client'
-r1 = requests.get(url, params=params).json()
+r1 = requests.get(url1, params=params).json()
 access_token = r1['access_token']
 h = {
 "Authorization":f"Bearer {access_token}"
@@ -44,7 +44,7 @@ h = {
 
 # request query list
 url2 = 'https://api.brandwatch.com/projects/1998290339/queries'
-r2 = requests.get(url, headers=h).json()
+r2 = requests.get(url2, headers=h).json()
 queries = [i['name'] for i in r2['results']]
 
 # user input query name
@@ -81,21 +81,21 @@ search_btn = st.button("Search", key='search')
 if st.session_state.get('button') != True:
     st.session_state['button'] = search_btn
 if st.session_state['button'] == True:
-    url = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
-    r = requests.get(url, headers=h).json()
-    st.write(f"Ready to collect {r['mentionsCount']} data points")
+    url4 = f"https://api.brandwatch.com/projects/1998290339/data/mentions/count?queryId%5B%5D={_id}&startDate={start}&endDate={end}"
+    r4 = requests.get(url4, headers=h).json()
+    st.write(f"Ready to collect {r4['mentionsCount']} data points")
 
 # start downloading
     download_btn = st.button("Download", key='download')
     if download_btn:
         url3 = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
-        r3 = requests.get(url, headers=h).json()
+        r3 = requests.get(url3, headers=h).json()
         ids = [i['guid'] for i in r3['results']]
         st.write('Getting ids...')
         while 'nextCursor' in r3:
-            cursor = r['nextCursor']
+            cursor = r3['nextCursor']
             url3 = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
-            r3 = requests.get(url, headers=h).json()
+            r3 = requests.get(url3, headers=h).json()
             ids += [i['guid'] for i in r3['results']]
             st.write(f"Collected {len(ids)} IDs")
 
