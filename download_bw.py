@@ -35,17 +35,17 @@ class FileDownloader(object):
 params = {
 "password":st.secrets["password"]
 }
-url = 'https://api.brandwatch.com/oauth/token?username=tzhu@gbexpertsgroup.com&grant_type=api-password&client_id=brandwatch-api-client'
-r = requests.get(url, params=params).json()
-access_token = r['access_token']
+url1 = 'https://api.brandwatch.com/oauth/token?username=tzhu@gbexpertsgroup.com&grant_type=api-password&client_id=brandwatch-api-client'
+r1 = requests.get(url, params=params).json()
+access_token = r1['access_token']
 h = {
 "Authorization":f"Bearer {access_token}"
 }
 
 # request query list
-url = 'https://api.brandwatch.com/projects/1998290339/queries'
-r = requests.get(url, headers=h).json()
-queries = [i['name'] for i in r['results']]
+url2 = 'https://api.brandwatch.com/projects/1998290339/queries'
+r2 = requests.get(url, headers=h).json()
+queries = [i['name'] for i in r2['results']]
 
 # user input query name
 st.markdown("# Download Tweets From Brandwatch")
@@ -88,15 +88,15 @@ if st.session_state['button'] == True:
 # start downloading
     download_btn = st.button("Download", key='download')
     if download_btn:
-        url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
-        r = requests.get(url, headers=h).json()
-        ids = [i['guid'] for i in r['results']]
+        url3 = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc"
+        r3 = requests.get(url, headers=h).json()
+        ids = [i['guid'] for i in r3['results']]
         st.write('Getting ids...')
-        while 'nextCursor' in r:
+        while 'nextCursor' in r3:
             cursor = r['nextCursor']
-            url = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
-            r = requests.get(url, headers=h).json()
-            ids += [i['guid'] for i in r['results']]
+            url3 = f"https://api.brandwatch.com/projects/1998290339/data/mentions?queryId={_id}&startDate={start}&endDate={end}&pageSize=5000&orderBy=date&orderDirection=asc&cursor={cursor}"
+            r3 = requests.get(url, headers=h).json()
+            ids += [i['guid'] for i in r3['results']]
             st.write(f"Collected {len(ids)} IDs")
 
         df = pd.DataFrame({
